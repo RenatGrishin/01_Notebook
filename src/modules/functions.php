@@ -4,6 +4,8 @@
 namespace src\modules;
 
 
+use http\Header;
+
 class functions
 {
     private $db_con;
@@ -17,13 +19,15 @@ class functions
     private $listUpdateDate;
     private $user_login;
     private $user_pass;
+    private $fio;
 
-    public function __construct($db_con, $userID)
+    public function __construct($db_con, $userID='false')
     {
         $this->db_con = $db_con;
         $this->userID = $userID;
     }
 
+    //add task
     public function addList($works, $last_data)
     {
         $db_con = $this->db_con;
@@ -36,6 +40,7 @@ class functions
         print "<b>Добавлено:</b> ". $works .' '. $last_data;
     }
 
+    //show task
     public function viewList(){
         $db_con = $this->db_con;
         $userID = $this->userID;
@@ -46,6 +51,7 @@ class functions
         }
     }
 
+    //Delete task
     public function deleteList($delListArray){
         $db_con = $this->db_con;
         $strDelList = $this->strDelList;
@@ -60,6 +66,7 @@ class functions
         $db_con->query("DELETE FROM dela WHERE id IN (". $strDelList .")");
     }
 
+    //Show a specific task for the page EditList.php
     public function listForUPD($listID){
         $db_con = $this->db_con;
         $this->listID = $listID;
@@ -70,6 +77,7 @@ class functions
         }
     }
 
+    //Update task
     public function listUpdate($listID, $updateWork, $updateDate){
     $db_con = $this->db_con;
     $this->listID = $listID;
@@ -79,6 +87,7 @@ class functions
     $db_con->query("UPDATE `dela` SET `works` = '". $updateWork ."', `last_date` = '". $updateDate ."' WHERE `dela`.`id` = ". $listID);
     }
 
+    //Login panel
     public function LogIn($login, $password){
         $db_con = $this->db_con;
         $this->user_login = $login;
@@ -91,5 +100,26 @@ class functions
                 $_SESSION['fio'] = $row['fio'];
             }
         }
+    }
+
+    //Registration
+    public function RegistrationUser($login, $password, $fio){
+        $db_con = $this->db_con;
+        $this->user_login = $login;
+        $this->user_pass = $password;
+        $this->fio = $fio;
+
+        $selUser = $db_con->query("SELECT * FROM `user` WHERE `login`='". $login ."'");
+        while($row = $selUser->fetch()){
+            $userExists = $row['id'];
+        }
+        if(!$userExists){
+            $addUser = $db_con->prepare("INSERT INTO `user` (fio, login, pass) VALUES (?, ?, ?)");
+            $addUser->execute([$fio, $login, $password]);
+            print "<br>Вы зарегестрировались. <a href='http://testbd/'>LogIn</a>";
+        }else{
+            print "Пользователь с таким логином существует";
+        }
+
     }
 }

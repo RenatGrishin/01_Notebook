@@ -4,8 +4,7 @@ require 'src/modules/db_connect.php';
 require 'src/modules/functions.php';
 
 $db_connect = new \src\modules\db_connect('localhost', 'spisok_del', 'Admin', '123');
-$addList = new \src\modules\functions($db_connect->db_con(), 1);
-
+$addList = new \src\modules\functions($db_connect->db_con(), $_SESSION['userID']);
 
 ?>
 <html>
@@ -23,7 +22,8 @@ if(!$_SESSION['userID']){
         <input type="text" name="user_name">
         <input type="password" name="user_password">
         <input type="submit" value="LogIn">
-    </form>
+    </form><br>
+    <a href="src/pages/Registration.php">Registration</a>
 <?php
 
 }else{
