@@ -6,7 +6,6 @@ namespace src\modules;
 
 class functions
 {
-
     private $db_con;
     private $userID;
     private $works;
@@ -16,6 +15,8 @@ class functions
     private $listID;
     private $listUpdateWork;
     private $listUpdateDate;
+    private $user_login;
+    private $user_pass;
 
     public function __construct($db_con, $userID)
     {
@@ -37,7 +38,9 @@ class functions
 
     public function viewList(){
         $db_con = $this->db_con;
-        $viewList = $db_con->query("SELECT * FROM dela");
+        $userID = $this->userID;
+
+        $viewList = $db_con->query("SELECT * FROM dela WHERE user_id=". $userID);
         while($row = $viewList->fetch()){
             print '<input type="checkbox" name="DeleteList[]" value="'. $row['id'] .'">'. $row['works'] .' - ('. $row['last_date'] .') <a href="/src/pages/EditList.php?EditListNum='. $row['id'] .'">Edit</a><br>';
         }
@@ -74,5 +77,19 @@ class functions
     $this->listUpdateDate = $updateDate;
 
     $db_con->query("UPDATE `dela` SET `works` = '". $updateWork ."', `last_date` = '". $updateDate ."' WHERE `dela`.`id` = ". $listID);
+    }
+
+    public function LogIn($login, $password){
+        $db_con = $this->db_con;
+        $this->user_login = $login;
+        $this->user_pass = $password;
+
+        $selUser = $db_con->query("SELECT * FROM `user` WHERE `login`='". $login ."' AND `pass`='". $password ."'");
+        while($row = $selUser->fetch()){
+            if($row['id']){
+                $_SESSION['userID'] = $row['id'];
+                $_SESSION['fio'] = $row['fio'];
+            }
+        }
     }
 }

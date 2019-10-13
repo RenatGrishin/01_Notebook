@@ -6,9 +6,15 @@ $db_connect = new \src\modules\db_connect('localhost', 'spisok_del', 'Admin', '1
 $addList = new \src\modules\functions($db_connect->db_con(), 1);
 $ELN = $addList->listForUPD($_GET['EditListNum']);
 
-if($_POST['list'] && $_POST['date']){
-    $addList->listUpdate($_GET['EditListNum'], $_POST['list'], $_POST['date']);
-    header("Location: http://testbd");
+if($_POST['list'] or $_POST['date']){
+    if(!$_POST['list']){
+        print "Поле с заданием пустое";
+    }if(!$_POST['date']){
+        print "Поле с датой пустое";
+    }if($_POST['list'] && $_POST['date']){
+        $addList->listUpdate($_GET['EditListNum'], $_POST['list'], $_POST['date']);
+        header("Location: http://testbd");
+    }
 }
 
 
